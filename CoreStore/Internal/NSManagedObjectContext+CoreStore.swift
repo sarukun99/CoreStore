@@ -25,7 +25,6 @@
 
 import Foundation
 import CoreData
-import GCDKit
 
 
 // MARK: - NSManagedObjectContext
@@ -62,7 +61,7 @@ internal extension NSManagedObjectContext {
     internal func entityDescriptionForEntityClass(entity: AnyClass) -> NSEntityDescription? {
         
         if let entityName = self.parentStack?.entityNameForEntityClass(entity) {
-
+            
             return NSEntityDescription.entityForName(
                 entityName,
                 inManagedObjectContext: self
@@ -73,7 +72,10 @@ internal extension NSManagedObjectContext {
     
     internal func setupForCoreStoreWithContextName(contextName: String) {
         
-        self.name = contextName
+        if #available(iOS 8.0, *) {
+            
+            self.name = contextName
+        }
         
         self.observerForWillSaveNotification = NotificationObserver(
             notificationName: NSManagedObjectContextWillSaveNotification,

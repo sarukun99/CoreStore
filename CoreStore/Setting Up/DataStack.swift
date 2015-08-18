@@ -25,7 +25,6 @@
 
 import Foundation
 import CoreData
-import GCDKit
 
 
 internal let applicationSupportDirectory = NSFileManager.defaultManager().URLsForDirectory(.ApplicationSupportDirectory, inDomains: .UserDomainMask).first!
@@ -93,7 +92,7 @@ public final class DataStack {
         
         var store: NSPersistentStore?
         var storeError: NSError?
-        coordinator.performBlockAndWait {
+        coordinator.performSynchronously {
             
             do {
                 
@@ -190,7 +189,7 @@ public final class DataStack {
         
         var store: NSPersistentStore?
         var storeError: NSError?
-        coordinator.performBlockAndWait {
+        coordinator.performSynchronously {
             
             do {
                 
@@ -219,7 +218,7 @@ public final class DataStack {
                 fileManager.removeSQLiteStoreAtURL(fileURL)
                 
                 var store: NSPersistentStore?
-                coordinator.performBlockAndWait {
+                coordinator.performSynchronously {
                     
                     do {
                         
@@ -265,10 +264,14 @@ public final class DataStack {
         let migrationQueue = NSOperationQueue()
         migrationQueue.maxConcurrentOperationCount = 1
         migrationQueue.name = "com.coreStore.migrationOperationQueue"
-        migrationQueue.qualityOfService = .Utility
-        migrationQueue.underlyingQueue = dispatch_queue_create("com.coreStore.migrationQueue", DISPATCH_QUEUE_SERIAL)
+        
+        if #available(iOS 8.0, *) {
+            
+            migrationQueue.qualityOfService = .Utility
+            migrationQueue.underlyingQueue = dispatch_queue_create("com.coreStore.migrationQueue", DISPATCH_QUEUE_SERIAL)
+        }
         return migrationQueue
-    }()
+        }()
     
     internal func entityNameForEntityClass(entityClass: AnyClass) -> String? {
         
@@ -283,7 +286,7 @@ public final class DataStack {
             returnValue = self.entityConfigurationsMapping[NSStringFromClass(entityClass)]?.map {
                 
                 return self.configurationStoreMapping[$0]!
-            } ?? []
+                } ?? []
         }
         return returnValue
     }

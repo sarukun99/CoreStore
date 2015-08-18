@@ -25,7 +25,6 @@
 
 import Foundation
 import CoreData
-import GCDKit
 
 
 // MARK: - ListMonitor
@@ -723,7 +722,7 @@ private final class FetchedResultsControllerDelegate: NSObject, NSFetchedResults
         self.handler?.controllerDidChangeContent(controller)
     }
     
-    @objc dynamic func controller(controller: NSFetchedResultsController, didChangeObject anObject: NSManagedObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+    @objc dynamic func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         
         self.handler?.controller(controller, didChangeObject: anObject, atIndexPath: indexPath, forChangeType: type, newIndexPath: newIndexPath)
     }

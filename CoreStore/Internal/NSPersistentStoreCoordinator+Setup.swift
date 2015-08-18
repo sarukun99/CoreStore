@@ -1,8 +1,8 @@
 //
-//  CoreStore.swift
+//  NSPersistentStoreCoordinator+Setup.swift
 //  CoreStore
 //
-//  Copyright (c) 2014 John Rommel Estropia
+//  Copyright (c) 2015 John Rommel Estropia
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -23,49 +23,42 @@
 //  SOFTWARE.
 //
 
+import Foundation
 import CoreData
 
 
-// MARK: - CoreStore
+// MARK: - NSPersistentStoreCoordinator
 
-/**
-`CoreStore` is the main entry point for all other APIs.
-*/
-public enum CoreStore {
+internal extension NSPersistentStoreCoordinator {
     
-    // MARK: Public
-    
-    /**
-    The default `DataStack` instance to be used. If `defaultStack` is not set before the first time accessed, a default-configured `DataStack` will be created.
-    
-    Changing the `defaultStack` is thread safe, but it is recommended to setup `DataStacks` on a common queue (e.g. the main queue).
-    */
-    public static var defaultStack: DataStack {
+    internal func performAsynchronously(closure: () -> Void) {
         
-        get {
-        
-            self.defaultStackBarrierQueue.barrierSync {
-        
-                if self.defaultStackInstance == nil {
-        
-                    self.defaultStackInstance = DataStack()
-                }
-            }
-            return self.defaultStackInstance!
-        }
-        set {
+        if #available(iOS 8.0, *) {
             
-            self.defaultStackBarrierQueue.barrierAsync {
+            self.performBlock(closure)
+        }
+        else {
+            
+            self.lock()
+            GCDQueue.Default.async {
                 
-                self.defaultStackInstance = newValue
+                closure()
+                self.unlock()
             }
         }
     }
     
-    
-    // MARK: Private
-    
-    private static let defaultStackBarrierQueue = GCDQueue.createConcurrent("com.coreStore.defaultStackBarrierQueue")
-    
-    private static var defaultStackInstance: DataStack?
+    internal func performSynchronously(closure: () -> Void) {
+        
+        if #available(iOS 8.0, *) {
+            
+            self.performBlockAndWait(closure)
+        }
+        else {
+            
+            self.lock()
+            autoreleasepool(closure)
+            self.unlock()
+        }
+    }
 }

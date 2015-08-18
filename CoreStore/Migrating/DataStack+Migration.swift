@@ -25,7 +25,6 @@
 
 import Foundation
 import CoreData
-import GCDKit
 
 
 // MARK: - DataStack
@@ -40,7 +39,7 @@ public extension DataStack {
     */
     public func addInMemoryStore(configuration configuration: String? = nil, completion: (PersistentStoreResult) -> Void) {
         
-        self.coordinator.performBlock {
+        self.coordinator.performAsynchronously {
             
             do {
                 
@@ -435,7 +434,14 @@ public extension DataStack {
         }
         
         let migrationOperation = NSBlockOperation()
-        migrationOperation.qualityOfService = .Utility
+        if #available(iOS 8.0, *) {
+            
+            migrationOperation.qualityOfService = .Utility
+        }
+        else {
+            
+            migrationOperation.queuePriority = .Normal
+        }
         operations.map { migrationOperation.addDependency($0) }
         migrationOperation.addExecutionBlock { () -> Void in
             
