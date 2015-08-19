@@ -25,6 +25,10 @@
 
 import CoreData
 
+#if FRAMEWORKS_ENABLED
+    import GCDKit
+#endif
+
 
 // MARK: - CoreStore
 

@@ -26,6 +26,10 @@
 import Foundation
 import CoreData
 
+#if FRAMEWORKS_ENABLED
+    import GCDKit
+#endif
+
 
 // MARK: - AsynchronousDataTransaction
 

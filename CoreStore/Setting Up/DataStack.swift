@@ -26,6 +26,10 @@
 import Foundation
 import CoreData
 
+#if FRAMEWORKS_ENABLED
+    import GCDKit
+#endif
+
 
 internal let applicationSupportDirectory = NSFileManager.defaultManager().URLsForDirectory(.ApplicationSupportDirectory, inDomains: .UserDomainMask).first!
 
