@@ -446,7 +446,7 @@ public extension DataStack {
             
             migrationOperation.queuePriority = .Normal
         }
-        operations.map { migrationOperation.addDependency($0) }
+        operations.forEach { migrationOperation.addDependency($0) }
         migrationOperation.addExecutionBlock { () -> Void in
             
             GCDQueue.Main.async {

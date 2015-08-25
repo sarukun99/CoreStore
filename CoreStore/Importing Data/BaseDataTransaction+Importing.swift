@@ -229,7 +229,7 @@ public extension BaseDataTransaction {
                     }
                 }
                 
-                for object in self.fetchAll(From(T), Where("%K IN %@", T.uniqueIDKeyPath, mapping.keys.array)) ?? [] {
+                for object in self.fetchAll(From(T), Where("%K IN %@", T.uniqueIDKeyPath, Array(mapping.keys))) ?? [] {
                     
                     try autoreleasepool {
                         
@@ -300,7 +300,7 @@ public extension BaseDataTransaction {
                 }
                 
                 var objects = Dictionary<T.UniqueIDType, T>()
-                for object in self.fetchAll(From(T), Where("%K IN %@", T.uniqueIDKeyPath, mapping.keys.array)) ?? [] {
+                for object in self.fetchAll(From(T), Where("%K IN %@", T.uniqueIDKeyPath, Array(mapping.keys))) ?? [] {
                     
                     try autoreleasepool {
                         
