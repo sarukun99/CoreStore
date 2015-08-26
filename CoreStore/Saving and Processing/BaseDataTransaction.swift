@@ -113,8 +113,11 @@ public /*abstract*/ class BaseDataTransaction {
             self.bypassesQueueing || self.transactionQueue.isCurrentExecutionContext(),
             "Attempted to update an entity of type \(typeName(object)) outside its designated queue."
         )
-        
-        return object?.inContext(self.context)
+        guard let object = object else {
+            
+            return nil
+        }
+        return self.context.fetchExisting(object)
     }
     
     /**
@@ -135,8 +138,7 @@ public /*abstract*/ class BaseDataTransaction {
                 || (into.configuration ?? Into.defaultConfigurationName) == objectID.persistentStore?.configurationName,
             "Attempted to update an entity of type \(typeName(T)) but the specified persistent store do not match the `NSManagedObjectID`."
         )
-        
-        return (into.entityClass as! NSManagedObject.Type).inContext(self.context, withObjectID: objectID) as? T
+        return self.fetchExisting(objectID) as? T
     }
     
     /**
@@ -150,8 +152,11 @@ public /*abstract*/ class BaseDataTransaction {
             self.bypassesQueueing || self.transactionQueue.isCurrentExecutionContext(),
             "Attempted to delete an entity outside its designated queue."
         )
-        
-        object?.inContext(self.context)?.deleteFromContext()
+        guard let object = object else {
+            
+            return
+        }
+        self.context.fetchExisting(object)?.deleteFromContext()
     }
     
     /**
@@ -179,9 +184,9 @@ public /*abstract*/ class BaseDataTransaction {
         )
         
         let context = self.context
-        for object in objects {
+        for case let object? in objects {
             
-            object?.inContext(context)?.deleteFromContext()
+            context.fetchExisting(object)?.deleteFromContext()
         }
     }
     
