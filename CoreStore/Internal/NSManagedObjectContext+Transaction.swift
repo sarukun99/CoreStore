@@ -74,7 +74,7 @@ internal extension NSManagedObjectContext {
         
         self.performBlockAndWait { [unowned self] () -> Void in
             
-            if !self.hasChanges {
+            guard self.hasChanges else {
                 
                 return
             }
@@ -118,7 +118,7 @@ internal extension NSManagedObjectContext {
         
         self.performBlock { () -> Void in
             
-            if !self.hasChanges {
+            guard self.hasChanges else {
                 
                 if let completion = completion {
                     

@@ -320,10 +320,11 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitorWillChange(monitor)
+                    return
                 }
+                observer.listMonitorWillChange(monitor)
             }
         )
         self.registerChangeNotification(
@@ -332,10 +333,11 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitorDidChange(monitor)
+                    return
                 }
+                observer.listMonitorDidChange(monitor)
             }
         )
     }
@@ -366,10 +368,11 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitorWillChange(monitor)
+                    return
                 }
+                observer.listMonitorWillChange(monitor)
             }
         )
         self.registerChangeNotification(
@@ -378,10 +381,11 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitorDidChange(monitor)
+                    return
                 }
+                observer.listMonitorDidChange(monitor)
             }
         )
         
@@ -391,14 +395,15 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitor(
-                        monitor,
-                        didInsertObject: object,
-                        toIndexPath: newIndexPath!
-                    )
+                    return
                 }
+                observer.listMonitor(
+                    monitor,
+                    didInsertObject: object,
+                    toIndexPath: newIndexPath!
+                )
             }
         )
         self.registerObjectNotification(
@@ -407,14 +412,15 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitor(
-                        monitor,
-                        didDeleteObject: object,
-                        fromIndexPath: indexPath!
-                    )
+                    return
                 }
+                observer.listMonitor(
+                    monitor,
+                    didDeleteObject: object,
+                    fromIndexPath: indexPath!
+                )
             }
         )
         self.registerObjectNotification(
@@ -423,14 +429,15 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitor(
-                        monitor,
-                        didUpdateObject: object,
-                        atIndexPath: indexPath!
-                    )
+                    return
                 }
+                observer.listMonitor(
+                    monitor,
+                    didUpdateObject: object,
+                    atIndexPath: indexPath!
+                )
             }
         )
         self.registerObjectNotification(
@@ -439,15 +446,16 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitor(
-                        monitor,
-                        didMoveObject: object,
-                        fromIndexPath: indexPath!,
-                        toIndexPath: newIndexPath!
-                    )
+                    return
                 }
+                observer.listMonitor(
+                    monitor,
+                    didMoveObject: object,
+                    fromIndexPath: indexPath!,
+                    toIndexPath: newIndexPath!
+                )
             }
         )
     }
@@ -478,10 +486,11 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitorWillChange(monitor)
+                    return
                 }
+                observer.listMonitorWillChange(monitor)
             }
         )
         self.registerChangeNotification(
@@ -490,10 +499,11 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitorDidChange(monitor)
+                    return
                 }
+                observer.listMonitorDidChange(monitor)
             }
         )
         
@@ -503,14 +513,15 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitor(
-                        monitor,
-                        didInsertObject: object,
-                        toIndexPath: newIndexPath!
-                    )
+                    return
                 }
+                observer.listMonitor(
+                    monitor,
+                    didInsertObject: object,
+                    toIndexPath: newIndexPath!
+                )
             }
         )
         self.registerObjectNotification(
@@ -519,14 +530,15 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
                 
-                if let observer = observer {
-                    
-                    observer.listMonitor(
-                        monitor,
-                        didDeleteObject: object,
-                        fromIndexPath: indexPath!
-                    )
+                guard let observer = observer else {
+                 
+                    return
                 }
+                observer.listMonitor(
+                    monitor,
+                    didDeleteObject: object,
+                    fromIndexPath: indexPath!
+                )
             }
         )
         self.registerObjectNotification(
@@ -535,14 +547,15 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitor(
-                        monitor,
-                        didUpdateObject: object,
-                        atIndexPath: indexPath!
-                    )
+                    return
                 }
+                observer.listMonitor(
+                    monitor,
+                    didUpdateObject: object,
+                    atIndexPath: indexPath!
+                )
             }
         )
         self.registerObjectNotification(
@@ -551,15 +564,16 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitor(
-                        monitor,
-                        didMoveObject: object,
-                        fromIndexPath: indexPath!,
-                        toIndexPath: newIndexPath!
-                    )
+                    return
                 }
+                observer.listMonitor(
+                    monitor,
+                    didMoveObject: object,
+                    fromIndexPath: indexPath!,
+                    toIndexPath: newIndexPath!
+                )
             }
         )
         
@@ -569,14 +583,15 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor, sectionInfo, sectionIndex) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitor(
-                        monitor,
-                        didInsertSection: sectionInfo,
-                        toSectionIndex: sectionIndex
-                    )
+                    return
                 }
+                observer.listMonitor(
+                    monitor,
+                    didInsertSection: sectionInfo,
+                    toSectionIndex: sectionIndex
+                )
             }
         )
         self.registerSectionNotification(
@@ -585,14 +600,15 @@ public final class ListMonitor<T: NSManagedObject> {
             toObserver: observer,
             callback: { [weak observer] (monitor, sectionInfo, sectionIndex) -> Void in
                 
-                if let observer = observer {
+                guard let observer = observer else {
                     
-                    observer.listMonitor(
-                        monitor,
-                        didDeleteSection: sectionInfo,
-                        fromSectionIndex: sectionIndex
-                    )
+                    return
                 }
+                observer.listMonitor(
+                    monitor,
+                    didDeleteSection: sectionInfo,
+                    fromSectionIndex: sectionIndex
+                )
             }
         )
     }
@@ -685,10 +701,11 @@ public final class ListMonitor<T: NSManagedObject> {
                 object: self,
                 closure: { [weak self] (note) -> Void in
                     
-                    if let strongSelf = self {
+                    guard let strongSelf = self else {
                         
-                        callback(monitor: strongSelf)
+                        return
                     }
+                    callback(monitor: strongSelf)
                 }
             ),
             forKey: notificationKey,
@@ -704,17 +721,18 @@ public final class ListMonitor<T: NSManagedObject> {
                 object: self,
                 closure: { [weak self] (note) -> Void in
                     
-                    if let strongSelf = self,
+                    guard let strongSelf = self,
                         let userInfo = note.userInfo,
-                        let object = userInfo[UserInfoKeyObject] as? T {
+                        let object = userInfo[UserInfoKeyObject] as? T else {
                             
-                            callback(
-                                monitor: strongSelf,
-                                object: object,
-                                indexPath: userInfo[UserInfoKeyIndexPath] as? NSIndexPath,
-                                newIndexPath: userInfo[UserInfoKeyNewIndexPath] as? NSIndexPath
-                            )
+                            return
                     }
+                    callback(
+                        monitor: strongSelf,
+                        object: object,
+                        indexPath: userInfo[UserInfoKeyIndexPath] as? NSIndexPath,
+                        newIndexPath: userInfo[UserInfoKeyNewIndexPath] as? NSIndexPath
+                    )
                 }
             ),
             forKey: notificationKey,
@@ -730,17 +748,18 @@ public final class ListMonitor<T: NSManagedObject> {
                 object: self,
                 closure: { [weak self] (note) -> Void in
                     
-                    if let strongSelf = self,
+                    guard let strongSelf = self,
                         let userInfo = note.userInfo,
                         let sectionInfo = userInfo[UserInfoKeySectionInfo] as? NSFetchedResultsSectionInfo,
-                        let sectionIndex = (userInfo[UserInfoKeySectionIndex] as? NSNumber)?.integerValue {
+                        let sectionIndex = (userInfo[UserInfoKeySectionIndex] as? NSNumber)?.integerValue else {
                             
-                            callback(
-                                monitor: strongSelf,
-                                sectionInfo: sectionInfo,
-                                sectionIndex: sectionIndex
-                            )
+                            return
                     }
+                    callback(
+                        monitor: strongSelf,
+                        sectionInfo: sectionInfo,
+                        sectionIndex: sectionIndex
+                    )
                 }
             ),
             forKey: notificationKey,
