@@ -315,7 +315,7 @@ public final class ListMonitor<T: NSManagedObject> {
         self.removeObserver(observer)
         
         self.registerChangeNotification(
-            &NotificationKey.willChangeList,
+            &self.willChangeListKey,
             name: ListMonitorWillChangeListNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
@@ -328,7 +328,7 @@ public final class ListMonitor<T: NSManagedObject> {
             }
         )
         self.registerChangeNotification(
-            &NotificationKey.didChangeList,
+            &self.didChangeListKey,
             name: ListMonitorDidChangeListNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
@@ -363,7 +363,7 @@ public final class ListMonitor<T: NSManagedObject> {
         self.removeObserver(observer)
         
         self.registerChangeNotification(
-            &NotificationKey.willChangeList,
+            &self.willChangeListKey,
             name: ListMonitorWillChangeListNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
@@ -376,7 +376,7 @@ public final class ListMonitor<T: NSManagedObject> {
             }
         )
         self.registerChangeNotification(
-            &NotificationKey.didChangeList,
+            &self.didChangeListKey,
             name: ListMonitorDidChangeListNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
@@ -390,7 +390,7 @@ public final class ListMonitor<T: NSManagedObject> {
         )
         
         self.registerObjectNotification(
-            &NotificationKey.didInsertObject,
+            &self.didInsertObjectKey,
             name: ListMonitorDidInsertObjectNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
@@ -407,7 +407,7 @@ public final class ListMonitor<T: NSManagedObject> {
             }
         )
         self.registerObjectNotification(
-            &NotificationKey.didDeleteObject,
+            &self.didDeleteObjectKey,
             name: ListMonitorDidDeleteObjectNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
@@ -424,7 +424,7 @@ public final class ListMonitor<T: NSManagedObject> {
             }
         )
         self.registerObjectNotification(
-            &NotificationKey.didUpdateObject,
+            &self.didUpdateObjectKey,
             name: ListMonitorDidUpdateObjectNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
@@ -441,7 +441,7 @@ public final class ListMonitor<T: NSManagedObject> {
             }
         )
         self.registerObjectNotification(
-            &NotificationKey.didMoveObject,
+            &self.didMoveObjectKey,
             name: ListMonitorDidMoveObjectNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
@@ -481,7 +481,7 @@ public final class ListMonitor<T: NSManagedObject> {
         self.removeObserver(observer)
         
         self.registerChangeNotification(
-            &NotificationKey.willChangeList,
+            &self.willChangeListKey,
             name: ListMonitorWillChangeListNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
@@ -494,7 +494,7 @@ public final class ListMonitor<T: NSManagedObject> {
             }
         )
         self.registerChangeNotification(
-            &NotificationKey.didChangeList,
+            &self.didChangeListKey,
             name: ListMonitorDidChangeListNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor) -> Void in
@@ -508,7 +508,7 @@ public final class ListMonitor<T: NSManagedObject> {
         )
         
         self.registerObjectNotification(
-            &NotificationKey.didInsertObject,
+            &self.didInsertObjectKey,
             name: ListMonitorDidInsertObjectNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
@@ -525,7 +525,7 @@ public final class ListMonitor<T: NSManagedObject> {
             }
         )
         self.registerObjectNotification(
-            &NotificationKey.didDeleteObject,
+            &self.didDeleteObjectKey,
             name: ListMonitorDidDeleteObjectNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
@@ -542,7 +542,7 @@ public final class ListMonitor<T: NSManagedObject> {
             }
         )
         self.registerObjectNotification(
-            &NotificationKey.didUpdateObject,
+            &self.didUpdateObjectKey,
             name: ListMonitorDidUpdateObjectNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
@@ -559,7 +559,7 @@ public final class ListMonitor<T: NSManagedObject> {
             }
         )
         self.registerObjectNotification(
-            &NotificationKey.didMoveObject,
+            &self.didMoveObjectKey,
             name: ListMonitorDidMoveObjectNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor, object, indexPath, newIndexPath) -> Void in
@@ -578,7 +578,7 @@ public final class ListMonitor<T: NSManagedObject> {
         )
         
         self.registerSectionNotification(
-            &NotificationKey.didInsertSection,
+            &self.didInsertSectionKey,
             name: ListMonitorDidInsertSectionNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor, sectionInfo, sectionIndex) -> Void in
@@ -595,7 +595,7 @@ public final class ListMonitor<T: NSManagedObject> {
             }
         )
         self.registerSectionNotification(
-            &NotificationKey.didDeleteSection,
+            &self.didDeleteSectionKey,
             name: ListMonitorDidDeleteSectionNotification,
             toObserver: observer,
             callback: { [weak observer] (monitor, sectionInfo, sectionIndex) -> Void in
@@ -628,16 +628,16 @@ public final class ListMonitor<T: NSManagedObject> {
         )
         
         let nilValue: AnyObject? = nil
-        setAssociatedRetainedObject(nilValue, forKey: &NotificationKey.willChangeList, inObject: observer)
-        setAssociatedRetainedObject(nilValue, forKey: &NotificationKey.didChangeList, inObject: observer)
+        setAssociatedRetainedObject(nilValue, forKey: &self.willChangeListKey, inObject: observer)
+        setAssociatedRetainedObject(nilValue, forKey: &self.didChangeListKey, inObject: observer)
         
-        setAssociatedRetainedObject(nilValue, forKey: &NotificationKey.didInsertObject, inObject: observer)
-        setAssociatedRetainedObject(nilValue, forKey: &NotificationKey.didDeleteObject, inObject: observer)
-        setAssociatedRetainedObject(nilValue, forKey: &NotificationKey.didUpdateObject, inObject: observer)
-        setAssociatedRetainedObject(nilValue, forKey: &NotificationKey.didMoveObject, inObject: observer)
+        setAssociatedRetainedObject(nilValue, forKey: &self.didInsertObjectKey, inObject: observer)
+        setAssociatedRetainedObject(nilValue, forKey: &self.didDeleteObjectKey, inObject: observer)
+        setAssociatedRetainedObject(nilValue, forKey: &self.didUpdateObjectKey, inObject: observer)
+        setAssociatedRetainedObject(nilValue, forKey: &self.didMoveObjectKey, inObject: observer)
         
-        setAssociatedRetainedObject(nilValue, forKey: &NotificationKey.didInsertSection, inObject: observer)
-        setAssociatedRetainedObject(nilValue, forKey: &NotificationKey.didDeleteSection, inObject: observer)
+        setAssociatedRetainedObject(nilValue, forKey: &self.didInsertSectionKey, inObject: observer)
+        setAssociatedRetainedObject(nilValue, forKey: &self.didDeleteSectionKey, inObject: observer)
     }
     
     
@@ -692,6 +692,17 @@ public final class ListMonitor<T: NSManagedObject> {
     private let fetchedResultsControllerDelegate: FetchedResultsControllerDelegate
     private let sectionIndexTransformer: (sectionName: KeyPath?) -> String?
     private weak var parentStack: DataStack?
+    
+    private var willChangeListKey: Void?
+    private var didChangeListKey: Void?
+    
+    private var didInsertObjectKey: Void?
+    private var didDeleteObjectKey: Void?
+    private var didUpdateObjectKey: Void?
+    private var didMoveObjectKey: Void?
+    
+    private var didInsertSectionKey: Void?
+    private var didDeleteSectionKey: Void?
     
     private func registerChangeNotification(notificationKey: UnsafePointer<Void>, name: String, toObserver observer: AnyObject, callback: (monitor: ListMonitor<T>) -> Void) {
         
@@ -968,17 +979,3 @@ private let UserInfoKeyNewIndexPath = "UserInfoKeyNewIndexPath"
 
 private let UserInfoKeySectionInfo = "UserInfoKeySectionInfo"
 private let UserInfoKeySectionIndex = "UserInfoKeySectionIndex"
-
-private struct NotificationKey {
-    
-    static var willChangeList: Void?
-    static var didChangeList: Void?
-    
-    static var didInsertObject: Void?
-    static var didDeleteObject: Void?
-    static var didUpdateObject: Void?
-    static var didMoveObject: Void?
-    
-    static var didInsertSection: Void?
-    static var didDeleteSection: Void?
-}
