@@ -154,6 +154,7 @@ public final class ListMonitor<T: NSManagedObject> {
     
     - returns: `true` if at least one object in any section exists, `false` otherwise
     */
+    @warn_unused_result
     public func hasObjects() -> Bool {
         
         return self.numberOfObjects() > 0
@@ -165,6 +166,7 @@ public final class ListMonitor<T: NSManagedObject> {
     - parameter section: the section index. Using an index outside the valid range will return `false`.
     - returns: `true` if at least one object in the specified section exists, `false` otherwise
     */
+    @warn_unused_result
     public func hasObjectsInSection(section: Int) -> Bool {
         
         return self.numberOfObjectsInSection(safeSectionIndex: section) > 0
@@ -175,6 +177,7 @@ public final class ListMonitor<T: NSManagedObject> {
     
     - returns: all objects in all sections
     */
+    @warn_unused_result
     public func objectsInAllSections() -> [T] {
         
         return (self.fetchedResultsController.fetchedObjects as? [T]) ?? []
@@ -186,6 +189,7 @@ public final class ListMonitor<T: NSManagedObject> {
     - parameter section: the section index. Using an index outside the valid range will throw an exception.
     - returns: all objects in the specified section
     */
+    @warn_unused_result
     public func objectsInSection(section: Int) -> [T] {
         
         return (self.fetchedResultsController.sections?[section].objects as? [T]) ?? []
@@ -197,6 +201,7 @@ public final class ListMonitor<T: NSManagedObject> {
     - parameter section: the section index. Using an index outside the valid range will return `nil`.
     - returns: all objects in the specified section
     */
+    @warn_unused_result
     public func objectsInSection(safeSectionIndex section: Int) -> [T]? {
         
         return (self.fetchedResultsController.sections?[section].objects as? [T]) ?? []
@@ -207,6 +212,7 @@ public final class ListMonitor<T: NSManagedObject> {
     
     - returns: the number of sections
     */
+    @warn_unused_result
     public func numberOfSections() -> Int {
         
         return self.fetchedResultsController.sections?.count ?? 0
@@ -217,6 +223,7 @@ public final class ListMonitor<T: NSManagedObject> {
     
     - returns: the number of objects in all sections
     */
+    @warn_unused_result
     public func numberOfObjects() -> Int {
         
         return self.fetchedResultsController.fetchedObjects?.count ?? 0
@@ -228,6 +235,7 @@ public final class ListMonitor<T: NSManagedObject> {
     - parameter section: the section index. Using an index outside the valid range will throw an exception.
     - returns: the number of objects in the specified section
     */
+    @warn_unused_result
     public func numberOfObjectsInSection(section: Int) -> Int {
         
         return self.sectionInfoAtIndex(section).numberOfObjects
@@ -239,6 +247,7 @@ public final class ListMonitor<T: NSManagedObject> {
     - parameter section: the section index. Using an index outside the valid range will return `nil`.
     - returns: the number of objects in the specified section
     */
+    @warn_unused_result
     public func numberOfObjectsInSection(safeSectionIndex section: Int) -> Int? {
         
         return self.sectionInfoAtIndex(safeSectionIndex: section)?.numberOfObjects
@@ -250,6 +259,7 @@ public final class ListMonitor<T: NSManagedObject> {
     - parameter section: the section index. Using an index outside the valid range will throw an exception.
     - returns: the `NSFetchedResultsSectionInfo` for the specified section
     */
+    @warn_unused_result
     public func sectionInfoAtIndex(section: Int) -> NSFetchedResultsSectionInfo {
         
         return self.fetchedResultsController.sections![section]
@@ -261,6 +271,7 @@ public final class ListMonitor<T: NSManagedObject> {
     - parameter section: the section index. Using an index outside the valid range will return `nil`.
     - returns: the `NSFetchedResultsSectionInfo` for the specified section, or `nil` if the section index is out of bounds.
     */
+    @warn_unused_result
     public func sectionInfoAtIndex(safeSectionIndex section: Int) -> NSFetchedResultsSectionInfo? {
         
         guard let sections = self.fetchedResultsController.sections
@@ -278,6 +289,7 @@ public final class ListMonitor<T: NSManagedObject> {
     - parameter object: the `NSManagedObject` to search the index of
     - returns: the index of the `NSManagedObject` if it exists in the `ListMonitor`'s fetched objects, or `nil` if not found.
     */
+    @warn_unused_result
     public func indexOf(object: T) -> Int? {
         
         return (self.fetchedResultsController.fetchedObjects as? [T] ?? []).indexOf(object)
@@ -289,6 +301,7 @@ public final class ListMonitor<T: NSManagedObject> {
     - parameter object: the `NSManagedObject` to search the index of
     - returns: the `NSIndexPath` of the `NSManagedObject` if it exists in the `ListMonitor`'s fetched objects, or `nil` if not found.
     */
+    @warn_unused_result
     public func indexPathOf(object: T) -> NSIndexPath? {
         
         return self.fetchedResultsController.indexPathForObject(object)

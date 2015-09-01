@@ -106,6 +106,7 @@ public final class SynchronousDataTransaction: BaseDataTransaction {
     - parameter object: the `NSManagedObject` type to be edited
     - returns: an editable proxy for the specified `NSManagedObject`.
     */
+    @warn_unused_result
     public override func edit<T: NSManagedObject>(object: T?) -> T? {
         
         CoreStore.assert(
@@ -123,6 +124,7 @@ public final class SynchronousDataTransaction: BaseDataTransaction {
     - parameter objectID: the `NSManagedObjectID` for the object to be edited
     - returns: an editable proxy for the specified `NSManagedObject`.
     */
+    @warn_unused_result
     public override func edit<T: NSManagedObject>(into: Into<T>, _ objectID: NSManagedObjectID) -> T? {
         
         CoreStore.assert(
