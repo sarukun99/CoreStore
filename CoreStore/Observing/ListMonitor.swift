@@ -318,7 +318,7 @@ public final class ListMonitor<T: NSManagedObject> {
     
     - parameter observer: a `ListObserver` to send change notifications to
     */
-    public func addObserver<U: ListObserver where U.EntityType == T>(observer: U) {
+    public func addObserver<U: ListObserver where U.ListEntityType == T>(observer: U) {
         
         CoreStore.assert(
             NSThread.isMainThread(),
@@ -366,7 +366,7 @@ public final class ListMonitor<T: NSManagedObject> {
     
     - parameter observer: a `ListObjectObserver` to send change notifications to
     */
-    public func addObserver<U: ListObjectObserver where U.EntityType == T>(observer: U) {
+    public func addObserver<U: ListObjectObserver where U.ListEntityType == T>(observer: U) {
         
         CoreStore.assert(
             NSThread.isMainThread(),
@@ -484,7 +484,7 @@ public final class ListMonitor<T: NSManagedObject> {
     
     - parameter observer: a `ListSectionObserver` to send change notifications to
     */
-    public func addObserver<U: ListSectionObserver where U.EntityType == T>(observer: U) {
+    public func addObserver<U: ListSectionObserver where U.ListEntityType == T>(observer: U) {
         
         CoreStore.assert(
             NSThread.isMainThread(),
@@ -633,7 +633,7 @@ public final class ListMonitor<T: NSManagedObject> {
     
     - parameter observer: a `ListObserver` to unregister notifications to
     */
-    public func removeObserver<U: ListObserver where U.EntityType == T>(observer: U) {
+    public func removeObserver<U: ListObserver where U.ListEntityType == T>(observer: U) {
         
         CoreStore.assert(
             NSThread.isMainThread(),
