@@ -353,6 +353,32 @@ public final class ListMonitor<T: NSManagedObject> {
                 observer.listMonitorDidChange(monitor)
             }
         )
+        self.registerChangeNotification(
+            &self.willRefetchListKey,
+            name: ListMonitorWillRefetchListNotification,
+            toObserver: observer,
+            callback: { [weak observer] (monitor) -> Void in
+                
+                guard let observer = observer else {
+                    
+                    return
+                }
+                observer.listMonitorWillRefetch(monitor)
+            }
+        )
+        self.registerChangeNotification(
+            &self.didRefetchListKey,
+            name: ListMonitorDidRefetchListNotification,
+            toObserver: observer,
+            callback: { [weak observer] (monitor) -> Void in
+                
+                guard let observer = observer else {
+                    
+                    return
+                }
+                observer.listMonitorDidRefetch(monitor)
+            }
+        )
     }
     
     /**
@@ -399,6 +425,32 @@ public final class ListMonitor<T: NSManagedObject> {
                     return
                 }
                 observer.listMonitorDidChange(monitor)
+            }
+        )
+        self.registerChangeNotification(
+            &self.willRefetchListKey,
+            name: ListMonitorWillRefetchListNotification,
+            toObserver: observer,
+            callback: { [weak observer] (monitor) -> Void in
+                
+                guard let observer = observer else {
+                    
+                    return
+                }
+                observer.listMonitorWillRefetch(monitor)
+            }
+        )
+        self.registerChangeNotification(
+            &self.didRefetchListKey,
+            name: ListMonitorDidRefetchListNotification,
+            toObserver: observer,
+            callback: { [weak observer] (monitor) -> Void in
+                
+                guard let observer = observer else {
+                    
+                    return
+                }
+                observer.listMonitorDidRefetch(monitor)
             }
         )
         
@@ -517,6 +569,32 @@ public final class ListMonitor<T: NSManagedObject> {
                     return
                 }
                 observer.listMonitorDidChange(monitor)
+            }
+        )
+        self.registerChangeNotification(
+            &self.willRefetchListKey,
+            name: ListMonitorWillRefetchListNotification,
+            toObserver: observer,
+            callback: { [weak observer] (monitor) -> Void in
+                
+                guard let observer = observer else {
+                    
+                    return
+                }
+                observer.listMonitorWillRefetch(monitor)
+            }
+        )
+        self.registerChangeNotification(
+            &self.didRefetchListKey,
+            name: ListMonitorDidRefetchListNotification,
+            toObserver: observer,
+            callback: { [weak observer] (monitor) -> Void in
+                
+                guard let observer = observer else {
+                    
+                    return
+                }
+                observer.listMonitorDidRefetch(monitor)
             }
         )
         
@@ -643,6 +721,8 @@ public final class ListMonitor<T: NSManagedObject> {
         let nilValue: AnyObject? = nil
         setAssociatedRetainedObject(nilValue, forKey: &self.willChangeListKey, inObject: observer)
         setAssociatedRetainedObject(nilValue, forKey: &self.didChangeListKey, inObject: observer)
+        setAssociatedRetainedObject(nilValue, forKey: &self.willRefetchListKey, inObject: observer)
+        setAssociatedRetainedObject(nilValue, forKey: &self.didRefetchListKey, inObject: observer)
         
         setAssociatedRetainedObject(nilValue, forKey: &self.didInsertObjectKey, inObject: observer)
         setAssociatedRetainedObject(nilValue, forKey: &self.didDeleteObjectKey, inObject: observer)
@@ -651,6 +731,54 @@ public final class ListMonitor<T: NSManagedObject> {
         
         setAssociatedRetainedObject(nilValue, forKey: &self.didInsertSectionKey, inObject: observer)
         setAssociatedRetainedObject(nilValue, forKey: &self.didDeleteSectionKey, inObject: observer)
+    }
+    
+    /**
+    Asks the `ListMonitor` to refetch its objects using the specified series of `FetchClause`s. Note that this method does not execute the fetch immediately; the actual fetching will happen after the `NSFetchedResultsController`'s last `controllerDidChangeContent(_:)` notification completes.
+    
+    `refetch(...)` broadcasts `listMonitorWillRefetch(...)` to its observers immediately, and then `listMonitorDidRefetch(...)` after the new fetch request completes.
+    
+    - parameter fetchClauses: a series of `FetchClause` instances for fetching the object list. Accepts `Where`, `OrderBy`, and `Tweak` clauses. Note that only specified clauses will be changed; unspecified clauses will use previous values.
+    */
+    public func refetch(fetchClauses: FetchClause...) {
+        
+        self.refetch(fetchClauses)
+    }
+    
+    /**
+    Asks the `ListMonitor` to refetch its objects using the specified series of `FetchClause`s. Note that this method does not execute the fetch immediately; the actual fetching will happen after the `NSFetchedResultsController`'s last `controllerDidChangeContent(_:)` notification completes.
+    
+    `refetch(...)` broadcasts `listMonitorWillRefetch(...)` to its observers immediately, and then `listMonitorDidRefetch(...)` after the new fetch request completes.
+    
+    - parameter fetchClauses: a series of `FetchClause` instances for fetching the object list. Accepts `Where`, `OrderBy`, and `Tweak` clauses. Note that only specified clauses will be changed; unspecified clauses will use previous values.
+    */
+    public func refetch(fetchClauses: [FetchClause]) {
+        
+        NSNotificationCenter.defaultCenter().postNotificationName(
+            ListMonitorWillRefetchListNotification,
+            object: self
+        )
+        
+        self.taskGroup.notify(.Main) { [weak self] () -> Void in
+            
+            guard let strongSelf = self else {
+                
+                return
+            }
+            
+            let fetchRequest = strongSelf.fetchedResultsController.fetchRequest
+            for clause in fetchClauses {
+                
+                clause.applyToFetchRequest(fetchRequest)
+            }
+            
+            try! strongSelf.fetchedResultsController.performFetch()
+            
+            NSNotificationCenter.defaultCenter().postNotificationName(
+                ListMonitorDidRefetchListNotification,
+                object: strongSelf
+            )
+        }
     }
     
     
@@ -704,10 +832,13 @@ public final class ListMonitor<T: NSManagedObject> {
     private let fetchedResultsController: NSFetchedResultsController
     private let fetchedResultsControllerDelegate: FetchedResultsControllerDelegate
     private let sectionIndexTransformer: (sectionName: KeyPath?) -> String?
+    private let taskGroup = GCDGroup()
     private weak var parentStack: DataStack?
     
     private var willChangeListKey: Void?
     private var didChangeListKey: Void?
+    private var willRefetchListKey: Void?
+    private var didRefetchListKey: Void?
     
     private var didInsertObjectKey: Void?
     private var didDeleteObjectKey: Void?
@@ -887,6 +1018,7 @@ extension ListMonitor: FetchedResultsControllerHandler {
     
     private func controllerWillChangeContent(controller: NSFetchedResultsController) {
         
+        self.taskGroup.enter()
         NSNotificationCenter.defaultCenter().postNotificationName(
             ListMonitorWillChangeListNotification,
             object: self
@@ -899,6 +1031,7 @@ extension ListMonitor: FetchedResultsControllerHandler {
             ListMonitorDidChangeListNotification,
             object: self
         )
+        self.taskGroup.leave()
     }
     
     private func controller(controller: NSFetchedResultsController, sectionIndexTitleForSectionName sectionName: String?) -> String? {
@@ -977,6 +1110,8 @@ private final class FetchedResultsControllerDelegate: NSObject, NSFetchedResults
 
 private let ListMonitorWillChangeListNotification = "ListMonitorWillChangeListNotification"
 private let ListMonitorDidChangeListNotification = "ListMonitorDidChangeListNotification"
+private let ListMonitorWillRefetchListNotification = "ListMonitorWillRefetchListNotification"
+private let ListMonitorDidRefetchListNotification = "ListMonitorDidRefetchListNotification"
 
 private let ListMonitorDidInsertObjectNotification = "ListMonitorDidInsertObjectNotification"
 private let ListMonitorDidDeleteObjectNotification = "ListMonitorDidDeleteObjectNotification"
