@@ -114,18 +114,15 @@ internal extension NSManagedObjectContext {
         return result
     }
     
-    internal func saveAsynchronouslyWithCompletion(completion: ((result: SaveResult) -> Void)?) {
+    internal func saveAsynchronouslyWithCompletion(completion: ((result: SaveResult) -> Void) = { _ in }) {
         
         self.performBlock { () -> Void in
             
             guard self.hasChanges else {
                 
-                if let completion = completion {
+                GCDQueue.Main.async {
                     
-                    GCDQueue.Main.async {
-                        
-                        completion(result: SaveResult(hasChanges: false))
-                    }
+                    completion(result: SaveResult(hasChanges: false))
                 }
                 return
             }
@@ -141,12 +138,9 @@ internal extension NSManagedObjectContext {
                     saveError,
                     "Failed to save \(typeName(NSManagedObjectContext))."
                 )
-                if let completion = completion {
+                GCDQueue.Main.async {
                     
-                    GCDQueue.Main.async {
-                        
-                        completion(result: SaveResult(saveError))
-                    }
+                    completion(result: SaveResult(saveError))
                 }
                 return
             }
@@ -155,7 +149,7 @@ internal extension NSManagedObjectContext {
                 
                 parentContext.saveAsynchronouslyWithCompletion(completion)
             }
-            else if let completion = completion {
+            else {
                 
                 GCDQueue.Main.async {
                     
