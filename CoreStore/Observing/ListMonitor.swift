@@ -113,6 +113,11 @@ public final class ListMonitor<T: NSManagedObject> {
     */
     public subscript(safeSectionIndex sectionIndex: Int, safeItemIndex itemIndex: Int) -> T? {
         
+        CoreStore.assert(
+            !self.isPendingRefetch || NSThread.isMainThread(),
+            "Attempted to access a \(typeName(self)) outside the main thread while a refetch is in progress."
+        )
+        
         guard let sections = self.fetchedResultsController.sections
             where sectionIndex < sections.count else {
                 
@@ -134,6 +139,11 @@ public final class ListMonitor<T: NSManagedObject> {
     - returns: the `NSManagedObject` at the specified index path
     */
     public subscript(indexPath: NSIndexPath) -> T {
+        
+        CoreStore.assert(
+            !self.isPendingRefetch || NSThread.isMainThread(),
+            "Attempted to access a \(typeName(self)) outside the main thread while a refetch is in progress."
+        )
         
         return self.fetchedResultsController.objectAtIndexPath(indexPath) as! T
     }
@@ -180,6 +190,11 @@ public final class ListMonitor<T: NSManagedObject> {
     @warn_unused_result
     public func objectsInAllSections() -> [T] {
         
+        CoreStore.assert(
+            !self.isPendingRefetch || NSThread.isMainThread(),
+            "Attempted to access a \(typeName(self)) outside the main thread while a refetch is in progress."
+        )
+        
         return (self.fetchedResultsController.fetchedObjects as? [T]) ?? []
     }
     
@@ -191,6 +206,11 @@ public final class ListMonitor<T: NSManagedObject> {
     */
     @warn_unused_result
     public func objectsInSection(section: Int) -> [T] {
+        
+        CoreStore.assert(
+            !self.isPendingRefetch || NSThread.isMainThread(),
+            "Attempted to access a \(typeName(self)) outside the main thread while a refetch is in progress."
+        )
         
         return (self.fetchedResultsController.sections?[section].objects as? [T]) ?? []
     }
@@ -204,6 +224,11 @@ public final class ListMonitor<T: NSManagedObject> {
     @warn_unused_result
     public func objectsInSection(safeSectionIndex section: Int) -> [T]? {
         
+        CoreStore.assert(
+            !self.isPendingRefetch || NSThread.isMainThread(),
+            "Attempted to access a \(typeName(self)) outside the main thread while a refetch is in progress."
+        )
+        
         return (self.fetchedResultsController.sections?[section].objects as? [T]) ?? []
     }
     
@@ -215,6 +240,11 @@ public final class ListMonitor<T: NSManagedObject> {
     @warn_unused_result
     public func numberOfSections() -> Int {
         
+        CoreStore.assert(
+            !self.isPendingRefetch || NSThread.isMainThread(),
+            "Attempted to access a \(typeName(self)) outside the main thread while a refetch is in progress."
+        )
+        
         return self.fetchedResultsController.sections?.count ?? 0
     }
     
@@ -225,6 +255,11 @@ public final class ListMonitor<T: NSManagedObject> {
     */
     @warn_unused_result
     public func numberOfObjects() -> Int {
+        
+        CoreStore.assert(
+            !self.isPendingRefetch || NSThread.isMainThread(),
+            "Attempted to access a \(typeName(self)) outside the main thread while a refetch is in progress."
+        )
         
         return self.fetchedResultsController.fetchedObjects?.count ?? 0
     }
@@ -262,6 +297,11 @@ public final class ListMonitor<T: NSManagedObject> {
     @warn_unused_result
     public func sectionInfoAtIndex(section: Int) -> NSFetchedResultsSectionInfo {
         
+        CoreStore.assert(
+            !self.isPendingRefetch || NSThread.isMainThread(),
+            "Attempted to access a \(typeName(self)) outside the main thread while a refetch is in progress."
+        )
+        
         return self.fetchedResultsController.sections![section]
     }
     
@@ -273,6 +313,11 @@ public final class ListMonitor<T: NSManagedObject> {
     */
     @warn_unused_result
     public func sectionInfoAtIndex(safeSectionIndex section: Int) -> NSFetchedResultsSectionInfo? {
+        
+        CoreStore.assert(
+            !self.isPendingRefetch || NSThread.isMainThread(),
+            "Attempted to access a \(typeName(self)) outside the main thread while a refetch is in progress."
+        )
         
         guard let sections = self.fetchedResultsController.sections
             where section < sections.count else {
@@ -292,6 +337,11 @@ public final class ListMonitor<T: NSManagedObject> {
     @warn_unused_result
     public func indexOf(object: T) -> Int? {
         
+        CoreStore.assert(
+            !self.isPendingRefetch || NSThread.isMainThread(),
+            "Attempted to access a \(typeName(self)) outside the main thread while a refetch is in progress."
+        )
+        
         return (self.fetchedResultsController.fetchedObjects as? [T] ?? []).indexOf(object)
     }
     
@@ -303,6 +353,11 @@ public final class ListMonitor<T: NSManagedObject> {
     */
     @warn_unused_result
     public func indexPathOf(object: T) -> NSIndexPath? {
+        
+        CoreStore.assert(
+            !self.isPendingRefetch || NSThread.isMainThread(),
+            "Attempted to access a \(typeName(self)) outside the main thread while a refetch is in progress."
+        )
         
         return self.fetchedResultsController.indexPathForObject(object)
     }
@@ -765,6 +820,11 @@ public final class ListMonitor<T: NSManagedObject> {
     */
     public func refetch(fetchClauses: [FetchClause]) {
         
+        CoreStore.assert(
+            NSThread.isMainThread(),
+            "Attempted to refetch a \(typeName(self)) outside the main thread."
+        )
+        
         self.isPendingRefetch = true
         
         NSNotificationCenter.defaultCenter().postNotificationName(
@@ -779,19 +839,39 @@ public final class ListMonitor<T: NSManagedObject> {
                 return
             }
             
+            strongSelf.fetchedResultsControllerDelegate.fetchedResultsController = nil
+            
             let fetchRequest = strongSelf.fetchedResultsController.fetchRequest
             for clause in fetchClauses {
                 
                 clause.applyToFetchRequest(fetchRequest)
             }
             
-            try! strongSelf.fetchedResultsController.performFetch()
-            strongSelf.isPendingRefetch = false
-            
-            NSNotificationCenter.defaultCenter().postNotificationName(
-                ListMonitorDidRefetchListNotification,
-                object: strongSelf
-            )
+            GCDQueue.Utility.async {
+                
+                guard let strongSelf = self else {
+                    
+                    return
+                }
+                
+                try! strongSelf.fetchedResultsController.performFetch()
+                
+                GCDQueue.Main.async { () -> Void in
+                    
+                    guard let strongSelf = self else {
+                        
+                        return
+                    }
+                    
+                    strongSelf.fetchedResultsControllerDelegate.fetchedResultsController = strongSelf.fetchedResultsController
+                    strongSelf.isPendingRefetch = false
+                    
+                    NSNotificationCenter.defaultCenter().postNotificationName(
+                        ListMonitorDidRefetchListNotification,
+                        object: strongSelf
+                    )
+                }
+            }
         }
     }
     
@@ -807,6 +887,9 @@ public final class ListMonitor<T: NSManagedObject> {
         
         fetchRequest.fetchLimit = 0
         fetchRequest.resultType = .ManagedObjectResultType
+        fetchRequest.fetchBatchSize = 20
+        fetchRequest.includesPendingChanges = false
+        fetchRequest.shouldRefreshRefetchedObjects = true
         
         for clause in fetchClauses {
             
