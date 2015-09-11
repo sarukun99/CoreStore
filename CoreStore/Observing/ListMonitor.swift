@@ -847,7 +847,7 @@ public final class ListMonitor<T: NSManagedObject> {
                 clause.applyToFetchRequest(fetchRequest)
             }
             
-            GCDQueue.Utility.async {
+            strongSelf.parentStack?.childTransactionQueue.async {
                 
                 guard let strongSelf = self else {
                     
