@@ -24,8 +24,7 @@
 //
 
 import Foundation
-import GCDKit
-
+import CoreData
 
 // MARK: - DetachedDataTransaction
 
